@@ -1,4 +1,4 @@
-# Execute JavaScript from Go
+# Execute JavaScript from Go (fork)
 
 <a href="https://github.com/rogchap/v8go/releases"><img src="https://img.shields.io/github/v/release/rogchap/v8go" alt="Github release"></a>
 [![Go Report Card](https://goreportcard.com/badge/rogchap.com/v8go)](https://goreportcard.com/report/rogchap.com/v8go)
@@ -205,9 +205,9 @@ variable.
 V8 version: **9.0.257.18** (April 2021)
 
 In order to make `v8go` usable as a standard Go package, prebuilt static libraries of V8
-are included for Linux and macOS. you *should not* require to build V8 yourself.
+are included for Linux and macOS. you _should not_ require to build V8 yourself.
 
-Due to security concerns of binary blobs hiding malicious code, the V8 binary is built via CI *ONLY*.
+Due to security concerns of binary blobs hiding malicious code, the V8 binary is built via CI _ONLY_.
 
 ## Project Goals
 
@@ -229,10 +229,10 @@ This project also aims to keep up-to-date with the latest (stable) release of V8
 
 [Aside from data races, Go should be memory-safe](https://research.swtch.com/gorace) and v8go should preserve this property by adding the necessary checks to return an error or panic on these unsupported code paths. Release builds of v8go don't include debugging information for the V8 library since it significantly adds to the binary size, slows down compilation and shouldn't be needed by users of v8go. However, if a v8go bug causes a crash (e.g. during new feature development) then it can be helpful to build V8 with debugging information to get a C++ backtrace with line numbers. The following steps will not only do that, but also enable V8 debug checking, which can help with catching misuse of the V8 API.
 
-1) Make sure to clone the projects submodules (ie. the V8's `depot_tools` project): `git submodule update --init --recursive`
-1) Build the V8 binary for your OS: `deps/build.py --debug`. V8 is a large project, and building the binary can take up to 30 minutes.
-1) Build the executable to debug, using `go build` for commands or `go test -c` for tests. You may need to add the `-ldflags=-compressdwarf=false` option to disable debug information compression so this information can be read by the debugger (e.g. lldb that comes with Xcode v12.5.1, the latest Xcode released at the time of writing)
-1) Run the executable with a debugger (e.g. `lldb -- ./v8go.test -test.run TestThatIsCrashing`, `run` to start execution then use `bt` to print a bracktrace after it breaks on a crash), since backtraces printed by Go or V8 don't currently include line number information.
+1. Make sure to clone the projects submodules (ie. the V8's `depot_tools` project): `git submodule update --init --recursive`
+1. Build the V8 binary for your OS: `deps/build.py --debug`. V8 is a large project, and building the binary can take up to 30 minutes.
+1. Build the executable to debug, using `go build` for commands or `go test -c` for tests. You may need to add the `-ldflags=-compressdwarf=false` option to disable debug information compression so this information can be read by the debugger (e.g. lldb that comes with Xcode v12.5.1, the latest Xcode released at the time of writing)
+1. Run the executable with a debugger (e.g. `lldb -- ./v8go.test -test.run TestThatIsCrashing`, `run` to start execution then use `bt` to print a bracktrace after it breaks on a crash), since backtraces printed by Go or V8 don't currently include line number information.
 
 ### Upgrading the V8 binaries
 
@@ -243,11 +243,11 @@ If the current [v8_version](https://github.com/rogchap/v8go/deps/v8_version) is 
 
 The next steps are:
 
-1) The build is not yet triggered automatically. To trigger it manually, go to the [V8
-Build](https://github.com/rogchap/v8go/actions?query=workflow%3A%22V8+Build%22) Github Action, Select "Run workflow",
-and select your pushed branch eg. `v8_upgrade/<v8-version>`.
-1) Once built, this should open 3 PRs against your branch to add the `libv8.a` for Linux (for x86_64) and macOS for x86_64 and arm64; merge
-these PRs into your branch. You are now ready to raise the PR against `master` with the latest version of V8.
+1. The build is not yet triggered automatically. To trigger it manually, go to the [V8
+   Build](https://github.com/rogchap/v8go/actions?query=workflow%3A%22V8+Build%22) Github Action, Select "Run workflow",
+   and select your pushed branch eg. `v8_upgrade/<v8-version>`.
+1. Once built, this should open 3 PRs against your branch to add the `libv8.a` for Linux (for x86_64) and macOS for x86_64 and arm64; merge
+   these PRs into your branch. You are now ready to raise the PR against `master` with the latest version of V8.
 
 ### Flushing after C/C++ standard library printing for debugging
 
@@ -271,7 +271,7 @@ is a part of LLVM. As such, compiling with clang as the C/C++ compiler seems to 
 backtraces (unfortunately still only of the system stack at the time of writing).
 
 For instance, on a Debian-based Linux system, you can use `sudo apt-get install clang-12` to install a
-recent version of clang.  Then CC and CXX environment variables are needed to use that compiler. With
+recent version of clang. Then CC and CXX environment variables are needed to use that compiler. With
 that compiler, the tests can be run as follows
 
 ```
@@ -281,7 +281,7 @@ CC=clang-12 CXX=clang++-12 go test -c --tags leakcheck && ./v8go.test
 The separate compile and link commands are currently needed to get line numbers in the backtrace.
 
 On macOS, leak checking isn't available with the version of clang that comes with Xcode, so a separate
-compiler installation is needed.  For example, with homebrew, `brew install llvm` will install a version
+compiler installation is needed. For example, with homebrew, `brew install llvm` will install a version
 of clang with support for this. The ASAN_OPTIONS environment variable will also be needed to run the code
 with leak checking enabled, since it isn't enabled by default on macOS. E.g. with the homebrew
 installation of llvm, the tests can be run with
